@@ -5,11 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "../contexts/AuthContext";
+import backend from "~backend/client";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [seeding, setSeeding] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
 
@@ -27,11 +29,31 @@ export default function Login() {
       console.error("Login error:", error);
       toast({
         title: "Error",
-        description: "Invalid email or password",
+        description: "Invalid email or password. Try seeding the database first if this is your first time.",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSeedDatabase = async () => {
+    setSeeding(true);
+    try {
+      await backend.seed.seedData();
+      toast({
+        title: "Success",
+        description: "Database seeded successfully! You can now login with the demo accounts.",
+      });
+    } catch (error) {
+      console.error("Seeding error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to seed database",
+        variant: "destructive",
+      });
+    } finally {
+      setSeeding(false);
     }
   };
 
@@ -80,11 +102,20 @@ export default function Login() {
 
           <div className="mt-6 p-4 bg-gray-100 rounded-lg">
             <p className="text-sm font-medium text-gray-700 mb-2">Demo Accounts:</p>
-            <div className="space-y-1 text-xs text-gray-600">
+            <div className="space-y-1 text-xs text-gray-600 mb-3">
               <p>Stanford Admin: admin@stanford.edu / password123</p>
               <p>Berkeley Admin: admin@berkeley.edu / password123</p>
               <p>Student: alice0@stanford.edu / password123</p>
             </div>
+            <Button 
+              onClick={handleSeedDatabase}
+              disabled={seeding}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              {seeding ? "Seeding Database..." : "Seed Database (First Time Setup)"}
+            </Button>
           </div>
         </CardContent>
       </Card>
