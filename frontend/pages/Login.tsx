@@ -122,6 +122,9 @@ export default function Login() {
             >
               {seeding ? "Seeding Database..." : "Seed Database (First Time Setup)"}
             </Button>
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              Note: stanford.edu and berkeley.edu are already taken. Use a different domain for new universities.
+            </p>
           </div>
         </CardContent>
       </Card>
