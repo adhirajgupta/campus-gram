@@ -17,5 +17,9 @@ export default defineConfig({
   mode: "development",
   build: {
     minify: false,
+  },
+  server: {
+    host: '0.0.0.0', // This allows access from any network interface
+    port: 5173, // Explicitly set the port
   }
 })

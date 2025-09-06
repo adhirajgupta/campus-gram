@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import CreateUniversity from "./pages/CreateUniversity";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import Compose from "./pages/Compose";
@@ -69,6 +70,7 @@ function AppInner() {
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/feed" replace /> : <Login />} />
         <Route path="/register" element={user ? <Navigate to="/feed" replace /> : <Register />} />
+        <Route path="/create-university" element={user ? <Navigate to="/feed" replace /> : <CreateUniversity />} />
         <Route path="/" element={<Navigate to="/feed" replace />} />
         
         <Route element={<Layout />}>
