@@ -91,11 +91,17 @@ export default function Login() {
             </Button>
           </form>
           
-          <div className="mt-4 text-center">
+          <div className="mt-4 text-center space-y-2">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
               <Link to="/register" className="text-blue-600 hover:underline">
                 Sign up
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600">
+              Want to create a university?{" "}
+              <Link to="/create-university" className="text-green-600 hover:underline font-medium">
+                Create University
               </Link>
             </p>
           </div>

@@ -8,7 +8,7 @@ interface PostCardProps {
   post: {
     id: number;
     content: string;
-    imageUrls: string[];
+    imageUrls?: string[] | null;
     location?: string;
     hashtags: string[];
     createdAt: string | Date;
@@ -73,7 +73,7 @@ export default function PostCard({ post, onLike }: PostCardProps) {
         </div>
 
         {/* Images */}
-        {post.imageUrls.length > 0 && (
+        {post.imageUrls && Array.isArray(post.imageUrls) && post.imageUrls.length > 0 && (
           <div className="mb-4">
             {post.imageUrls.length === 1 ? (
               <img 
