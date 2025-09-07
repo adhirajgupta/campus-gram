@@ -73,18 +73,16 @@ function AppInner() {
         <Route path="/create-university" element={user ? <Navigate to="/feed" replace /> : <UniversityOnboarding />} />
         <Route path="/" element={<Navigate to="/feed" replace />} />
         
-        <Route element={<Layout />}>
-          <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-          <Route path="/u/:username" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/p/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
-          <Route path="/compose" element={<ProtectedRoute><Compose /></ProtectedRoute>} />
-          <Route path="/campus" element={<ProtectedRoute><Campus /></ProtectedRoute>} />
-          <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
-          <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
-          <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-        </Route>
+        <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+        <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+        <Route path="/compose" element={<ProtectedRoute><Compose /></ProtectedRoute>} />
+        <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+        <Route path="/u/:username" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/p/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
+        <Route path="/campus" element={<ProtectedRoute><Campus /></ProtectedRoute>} />
+        <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
       </Routes>
       <Toaster />
     </Router>
