@@ -76,8 +76,15 @@ export default defineConfig({
   build: {
     minify: false,
   },
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-  }
+ server: {
+  host: '0.0.0.0',
+  port: 5173,
+  allowedHosts: [
+    "all"
+  ],
+  cors:true,
+    origin: "https://9f9dbfd7f9c9.ngrok-free.app" // to be changed once the final domain comes through
+
+}
+
 })
