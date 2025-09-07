@@ -2,6 +2,15 @@
 
 @import "tw-animate-css";
 
+/* MTF Jude Font */
+@font-face {
+  font-family: 'MTF Jude';
+  src: url('./assets/fonts/Chalk\ Board.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @utility container {

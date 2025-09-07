@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search as SearchIcon, User, FileText, MapPin } from "lucide-react";
+import { Search as SearchIcon, User, FileText, MapPin, Home, Plus, MessageCircle } from "lucide-react";
 import { useDebounce } from "../hooks/useDebounce";
 import backend from "~backend/client";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Search() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [activeTab, setActiveTab] = useState("all");
@@ -35,25 +36,38 @@ export default function Search() {
   }, [debouncedQuery, setSearchParams]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-4">
-        <div className="relative flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search users, posts, locations..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
+    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+      <div className="min-h-screen">
+        {/* Content */}
+        <div className="px-6 py-8 pb-24">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
+              search campus
+            </h1>
+          </div>
 
-      {query.trim().length === 0 ? (
-        <div className="text-center py-12">
-          <SearchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">Enter a search term to find users, posts, and locations</p>
-        </div>
-      ) : (
+          {/* Search Bar */}
+          <div className="mb-6">
+            <div className="relative">
+              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" style={{ transform: 'rotate(2deg)' }} />
+              <input
+                type="text"
+                placeholder="search users, posts, locations..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="doodle w-full h-12 pl-10 pr-4 text-lg border-2 border-gray-600 rounded-lg bg-white focus:outline-none focus:border-gray-800"
+                style={{ transform: 'rotate(0.5deg)' }}
+              />
+            </div>
+          </div>
+
+          {query.trim().length === 0 ? (
+            <div className="text-center py-12">
+              <SearchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" style={{ transform: 'rotate(2deg)' }} />
+              <p className="text-gray-500" style={{ transform: 'rotate(-0.5deg)' }}>enter a search term to find users, posts, and locations</p>
+            </div>
+          ) : (
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
@@ -234,8 +248,37 @@ export default function Search() {
               ))}
             </div>
           </TabsContent>
-        </Tabs>
-      )}
+          </Tabs>
+          )}
+        </div>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-100 border-t border-gray-300" style={{
+          background: 'repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 2px, #e5e7eb 2px, #e5e7eb 4px)',
+          transform: 'rotate(-0.5deg)'
+        }}>
+          <div className="flex justify-between items-center py-6 px-8 relative">
+            <button onClick={() => navigate('/feed')} className="hover:opacity-70 transition-opacity">
+              <Home className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(3deg)' }} />
+            </button>
+            <button onClick={() => navigate('/search')} className="hover:opacity-70 transition-opacity">
+              <SearchIcon className="h-7 w-7 text-gray-600" style={{ transform: 'rotate(-2deg)' }} />
+            </button>
+            <button onClick={() => navigate('/compose')} className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-400 absolute -top-4 left-1/2 hover:bg-gray-200 transition-colors" style={{ 
+              transform: 'translateX(-50%) rotate(2deg)',
+              background: 'repeating-linear-gradient(45deg, #f9fafb, #f9fafb 2px, #f3f4f6 2px, #f3f4f6 4px)'
+            }}>
+              <Plus className="h-8 w-8 text-gray-500" style={{ transform: 'rotate(-1deg)' }} />
+            </button>
+            <button onClick={() => navigate('/events')} className="ml-20 hover:opacity-70 transition-opacity">
+              <MessageCircle className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-3deg)' }} />
+            </button>
+            <button onClick={() => navigate(`/u/${user?.username}`)} className="hover:opacity-70 transition-opacity">
+              <User className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(2deg)' }} />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
