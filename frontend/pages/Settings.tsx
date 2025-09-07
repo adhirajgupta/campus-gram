@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { User, Mail, GraduationCap, BookOpen, Home, Search, Plus, MessageCircle } from "lucide-react";
+import TopNavbar from "../components/TopNavbar";
+import { User, Mail, GraduationCap, BookOpen, Home, Search, Plus, MessageCircle, Bell } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -52,7 +53,8 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
-      <div className="min-h-screen">
+      <TopNavbar />
+      <div className="min-h-screen pt-16">
         {/* Content */}
         <div className="px-6 py-8 pb-24">
           {/* Header */}
@@ -174,8 +176,8 @@ export default function Settings() {
             <button onClick={() => navigate('/feed')} className="hover:opacity-70 transition-opacity">
               <Home className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(3deg)' }} />
             </button>
-            <button onClick={() => navigate('/search')} className="hover:opacity-70 transition-opacity">
-              <Search className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-2deg)' }} />
+            <button onClick={() => navigate('/study-groups')} className="hover:opacity-70 transition-opacity">
+              <MessageCircle className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-2deg)' }} />
             </button>
             <button onClick={() => navigate('/compose')} className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-400 absolute -top-4 left-1/2 hover:bg-gray-200 transition-colors" style={{ 
               transform: 'translateX(-50%) rotate(2deg)',
@@ -184,7 +186,7 @@ export default function Settings() {
               <Plus className="h-8 w-8 text-gray-500" style={{ transform: 'rotate(-1deg)' }} />
             </button>
             <button onClick={() => navigate('/events')} className="ml-20 hover:opacity-70 transition-opacity">
-              <MessageCircle className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-3deg)' }} />
+              <Bell className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-3deg)' }} />
             </button>
             <button onClick={() => navigate(`/u/${user?.username}`)} className="hover:opacity-70 transition-opacity">
               <User className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(2deg)' }} />

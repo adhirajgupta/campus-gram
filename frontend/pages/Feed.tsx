@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import PostCard from "../components/PostCard";
+import TopNavbar from "../components/TopNavbar";
 import backend from "~backend/client";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +15,9 @@ import {
   Star,
   Home,
   Plus,
-  X
+  X,
+  MapPin,
+  Send
 } from "lucide-react";
 
 export default function Feed() {
@@ -24,6 +27,9 @@ export default function Feed() {
   const [cursor, setCursor] = useState<string | undefined>();
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [selectedPost, setSelectedPost] = useState<any | null>(null);
+  const [newComment, setNewComment] = useState("");
+  const [showComments, setShowComments] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["posts", user?.universityId, cursor],
@@ -34,6 +40,7 @@ export default function Feed() {
       limit: 10,
     }),
     enabled: !!user,
+    refetchOnWindowFocus: true, // Refetch when returning to the page
   });
 
   useEffect(() => {
@@ -45,6 +52,54 @@ export default function Feed() {
       }
     }
   }, [data, cursor]);
+
+  // Refetch posts when component mounts (e.g., returning from compose page)
+  useEffect(() => {
+    if (user) {
+      refetch();
+    }
+  }, [user, refetch]);
+
+  // Comments query
+  const { data: commentsData, refetch: refetchComments } = useQuery({
+    queryKey: ["comments", selectedPost?.id],
+    queryFn: () => backend.comments.list({ postId: selectedPost!.id }),
+    enabled: !!selectedPost && showComments,
+  });
+
+  // Create comment mutation
+  const createCommentMutation = useMutation({
+    mutationFn: (content: string) => backend.comments.create({
+      postId: selectedPost!.id,
+      userId: user!.id,
+      content: content.trim(),
+    }),
+    onSuccess: () => {
+      setNewComment("");
+      refetchComments();
+      // Update post comments count
+      setAllPosts(prev => prev.map(post => 
+        post.id === selectedPost.id 
+          ? { ...post, commentsCount: post.commentsCount + 1 }
+          : post
+      ));
+      if (selectedPost) {
+        setSelectedPost((prev: any) => prev ? { ...prev, commentsCount: prev.commentsCount + 1 } : null);
+      }
+      toast({
+        title: "Success",
+        description: "Comment added successfully!",
+      });
+    },
+    onError: (error) => {
+      console.error("Failed to create comment:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add comment",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleLoadMore = () => {
     if (data?.nextCursor) {
@@ -66,6 +121,11 @@ export default function Feed() {
           ? { ...post, isLiked: result.liked, likesCount: result.likesCount }
           : post
       ));
+      
+      // Update selected post if it's the same
+      if (selectedPost && selectedPost.id === postId) {
+        setSelectedPost((prev: any) => prev ? { ...prev, isLiked: result.liked, likesCount: result.likesCount } : null);
+      }
     } catch (error) {
       console.error("Failed to toggle like:", error);
       toast({
@@ -74,6 +134,13 @@ export default function Feed() {
         variant: "destructive",
       });
     }
+  };
+
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() || !user || !selectedPost) return;
+    
+    createCommentMutation.mutate(newComment);
   };
 
   if (error) {
@@ -98,7 +165,8 @@ export default function Feed() {
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
-      <div className="min-h-screen">
+      <TopNavbar />
+      <div className="min-h-screen pt-16">
         {/* Content */}
         <div className="px-6 py-8 pb-24">
           {/* Welcome Message */}
@@ -106,23 +174,16 @@ export default function Feed() {
             <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
               welcome, what's happening on campus?
             </h1>
+            <button 
+              onClick={() => refetch()}
+              disabled={isLoading}
+              className="mt-2 text-sm text-gray-600 underline decoration-1 underline-offset-2 hover:text-gray-800"
+              style={{ transform: 'rotate(0.3deg)' }}
+            >
+              {isLoading ? 'refreshing...' : 'refresh'}
+            </button>
           </div>
 
-          {/* Search Bar */}
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" style={{ transform: 'rotate(2deg)' }} />
-              <input
-                type="text"
-                placeholder="search events"
-                className="w-full h-12 pl-10 pr-4 text-lg border-2 border-gray-600 rounded-lg bg-white focus:outline-none focus:border-gray-800"
-                style={{ 
-                  transform: 'rotate(0.3deg)',
-                  background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 2px, #f9f9f9 2px, #f9f9f9 4px)'
-                }}
-              />
-            </div>
-          </div>
 
           {/* Category Filters */}
           <div className="flex space-x-2 mb-6 overflow-x-auto">
@@ -196,11 +257,25 @@ export default function Feed() {
                     >
                       {/* Post Image or Content Preview */}
                       <div className="w-full h-20 bg-gray-200 rounded mb-2 relative overflow-hidden">
-                        {post.imageUrls && post.imageUrls.length > 0 ? (
+                        {post.imageUrls && Array.isArray(post.imageUrls) && post.imageUrls.length > 0 ? (
                           <img 
                             src={post.imageUrls[0]} 
                             alt="Post preview" 
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Hide image if it fails to load and show content instead
+                              e.currentTarget.style.display = 'none';
+                              const parent = e.currentTarget.parentElement;
+                              if (parent) {
+                                parent.innerHTML = `
+                                  <div class="w-full h-full flex items-center justify-center p-1">
+                                    <p class="text-xs text-gray-600 text-center leading-tight" style="font-family: 'MTF Jude', cursive;">
+                                      ${post.content?.substring(0, 20)}...
+                                    </p>
+                                  </div>
+                                `;
+                              }
+                            }}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center p-1">
@@ -222,8 +297,17 @@ export default function Feed() {
                       
                       {/* Post Summary */}
                       <div className="text-xs text-gray-600" style={{ fontFamily: 'MTF Jude, cursive' }}>
-                        <div className="h-2 bg-gray-300 rounded w-full mb-1"></div>
-                        <div className="h-2 bg-gray-300 rounded w-2/3"></div>
+                        <p className="line-clamp-2 leading-tight">
+                          {post.content?.substring(0, 50)}...
+                        </p>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs text-gray-500">
+                            {post.likesCount} likes
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {post.commentsCount} comments
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -278,8 +362,8 @@ export default function Feed() {
             <button onClick={() => navigate('/feed')} className="hover:opacity-70 transition-opacity">
               <Home className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(3deg)' }} />
             </button>
-            <button onClick={() => navigate('/search')} className="hover:opacity-70 transition-opacity">
-              <Search className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-2deg)' }} />
+            <button onClick={() => navigate('/study-groups')} className="hover:opacity-70 transition-opacity">
+              <MessageCircle className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-2deg)' }} />
             </button>
             <button onClick={() => navigate('/compose')} className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-400 absolute -top-4 left-1/2 hover:bg-gray-200 transition-colors" style={{ 
               transform: 'translateX(-50%) rotate(2deg)',
@@ -288,7 +372,7 @@ export default function Feed() {
               <Plus className="h-8 w-8 text-gray-500" style={{ transform: 'rotate(-1deg)' }} />
             </button>
             <button onClick={() => navigate('/events')} className="ml-20 hover:opacity-70 transition-opacity">
-              <MessageCircle className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-3deg)' }} />
+              <Bell className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-3deg)' }} />
             </button>
             <button onClick={() => navigate(`/u/${user?.username}`)} className="hover:opacity-70 transition-opacity">
               <User className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(2deg)' }} />
@@ -299,18 +383,20 @@ export default function Feed() {
         {/* Post Detail Modal */}
         {selectedPost && (
           <div className="fixed inset-0 bg-white flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto border-2 border-gray-300" style={{ 
+            <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto border-2 border-gray-300 relative" style={{ 
               transform: 'rotate(-0.5deg)',
               background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 2px, #f9fafb 2px, #f9fafb 4px)'
             }}>
+              {/* Close Button */}
+              <button 
+                onClick={() => setSelectedPost(null)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
+                style={{ transform: 'rotate(2deg)' }}
+              >
+                <X className="h-6 w-6" />
+              </button>
+              
               <div className="p-6">
-                {/* Close Button */}
-                <button 
-                  onClick={() => setSelectedPost(null)}
-                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                >
-                  <X className="h-6 w-6" />
-                </button>
 
                 {/* Post Content */}
                 <div className="space-y-4">
@@ -321,42 +407,90 @@ export default function Feed() {
                     </div>
                     <div>
                       <p className="font-bold text-gray-800" style={{ fontFamily: 'MTF Jude, cursive' }}>
-                        {selectedPost.author?.username || 'Anonymous'}
+                        {selectedPost.user?.fullName || selectedPost.user?.username || 'Anonymous'}
                       </p>
                       <p className="text-sm text-gray-500" style={{ fontFamily: 'MTF Jude, cursive' }}>
-                        {new Date(selectedPost.createdAt).toLocaleDateString()}
+                        @{selectedPost.user?.username || 'unknown'} • {new Date(selectedPost.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
 
                   {/* Post Images */}
-                  {selectedPost.imageUrls && selectedPost.imageUrls.length > 0 && (
-                    <div className="space-y-2">
-                      {selectedPost.imageUrls.map((url: string, index: number) => (
-                        <img 
-                          key={index}
-                          src={url} 
-                          alt={`Post image ${index + 1}`}
-                          className="w-full rounded-lg border border-gray-300"
-                        />
-                      ))}
-                    </div>
-                  )}
+                  {(() => {
+                    // Debug: Log imageUrls to see what we're getting
+                    console.log('Post imageUrls:', selectedPost.imageUrls, typeof selectedPost.imageUrls);
+                    
+                    // Handle different possible formats
+                    let imageUrls = selectedPost.imageUrls;
+                    if (typeof imageUrls === 'string') {
+                      try {
+                        imageUrls = JSON.parse(imageUrls);
+                      } catch (e) {
+                        console.error('Failed to parse imageUrls:', e);
+                        imageUrls = [];
+                      }
+                    }
+                    
+                    if (Array.isArray(imageUrls) && imageUrls.length > 0) {
+                      return (
+                        <div className="space-y-2">
+                          {imageUrls.map((url: string, index: number) => (
+                            <img 
+                              key={index}
+                              src={url} 
+                              alt={`Post image ${index + 1}`}
+                              className="w-full rounded-lg border border-gray-300"
+                              onError={(e) => {
+                                console.error('Image failed to load:', url);
+                                e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Image+Not+Available';
+                              }}
+                            />
+                          ))}
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
 
                   {/* Post Content */}
                   <div className="text-gray-800" style={{ fontFamily: 'MTF Jude, cursive' }}>
                     {selectedPost.content}
                   </div>
 
+                  {/* Location */}
+                  {selectedPost.location && (
+                    <div className="flex items-center space-x-1 text-gray-500">
+                      <MapPin className="h-4 w-4" />
+                      <span className="text-sm" style={{ fontFamily: 'MTF Jude, cursive' }}>
+                        {selectedPost.location}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Hashtags */}
+                  {selectedPost.hashtags && Array.isArray(selectedPost.hashtags) && selectedPost.hashtags.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {selectedPost.hashtags.map((hashtag: string, index: number) => (
+                        <span 
+                          key={index}
+                          className="text-blue-600 text-sm" 
+                          style={{ fontFamily: 'MTF Jude, cursive' }}
+                        >
+                          #{hashtag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Post Stats */}
                   <div className="flex items-center space-x-4 text-gray-500">
                     <div className="flex items-center space-x-1">
                       <ThumbsUp className="h-4 w-4" />
-                      <span className="text-sm">{selectedPost.likeCount || 0}</span>
+                      <span className="text-sm">{selectedPost.likesCount || 0}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <MessageCircle className="h-4 w-4" />
-                      <span className="text-sm">{selectedPost.commentCount || 0}</span>
+                      <span className="text-sm">{selectedPost.commentsCount || 0}</span>
                     </div>
                   </div>
 
@@ -371,6 +505,82 @@ export default function Feed() {
                   >
                     {selectedPost.isLiked ? 'Unlike' : 'Like'} Post
                   </button>
+
+                  {/* Comments Section */}
+                  <div className="border-t border-gray-300 pt-4 mt-4">
+                    <button
+                      onClick={() => setShowComments(!showComments)}
+                      className="w-full py-2 px-4 border-2 border-gray-400 rounded-lg font-bold text-gray-700 hover:bg-gray-100 transition-colors mb-4"
+                      style={{ 
+                        transform: 'rotate(-0.3deg)',
+                        fontFamily: 'MTF Jude, cursive'
+                      }}
+                    >
+                      {showComments ? 'Hide' : 'Show'} Comments ({selectedPost.commentsCount || 0})
+                    </button>
+
+                    {showComments && (
+                      <div className="space-y-4">
+                        {/* Add Comment Form */}
+                        <form onSubmit={handleCommentSubmit} className="space-y-2">
+                          <textarea
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            placeholder="Add a comment..."
+                            rows={2}
+                            className="w-full p-2 border-2 border-gray-400 rounded-lg resize-none"
+                            style={{ 
+                              transform: 'rotate(0.2deg)',
+                              fontFamily: 'MTF Jude, cursive'
+                            }}
+                          />
+                          <button
+                            type="submit"
+                            disabled={!newComment.trim() || createCommentMutation.isPending}
+                            className="flex items-center space-x-2 px-4 py-2 bg-gray-200 border-2 border-gray-400 rounded-lg font-bold text-gray-700 hover:bg-gray-300 transition-colors disabled:opacity-50"
+                            style={{ 
+                              transform: 'rotate(-0.2deg)',
+                              fontFamily: 'MTF Jude, cursive'
+                            }}
+                          >
+                            <Send className="h-4 w-4" />
+                            <span>{createCommentMutation.isPending ? 'Posting...' : 'Post Comment'}</span>
+                          </button>
+                        </form>
+
+                        {/* Comments List */}
+                        <div className="space-y-3">
+                          {commentsData?.comments?.map((comment: any) => (
+                            <div key={comment.id} className="p-3 bg-gray-50 rounded-lg border border-gray-200" style={{ 
+                              transform: 'rotate(0.1deg)',
+                              fontFamily: 'MTF Jude, cursive'
+                            }}>
+                              <div className="flex items-center space-x-2 mb-2">
+                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                                  <User className="h-4 w-4 text-gray-500" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-bold text-gray-800">
+                                    {comment.user?.fullName || comment.user?.username || 'Anonymous'}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {new Date(comment.createdAt).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-700">{comment.content}</p>
+                            </div>
+                          ))}
+                          
+                          {commentsData?.comments?.length === 0 && (
+                            <p className="text-center text-gray-500 text-sm" style={{ fontFamily: 'MTF Jude, cursive' }}>
+                              No comments yet. Be the first to comment!
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
