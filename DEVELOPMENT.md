@@ -27,7 +27,7 @@ npm install -g bun
 
 2. Start the Encore development server:
    ```bash
-   encore run
+      encore run
    ```
 
 The backend will be available at the URL shown in your terminal (typically `http://localhost:4000`).

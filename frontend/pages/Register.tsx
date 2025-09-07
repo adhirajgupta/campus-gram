@@ -257,18 +257,7 @@ export default function Register() {
         </div>
 
         {/* Info Box */}
-        <div className="p-4 border-2 border-gray-400 rounded-lg" style={{ 
-          transform: 'rotate(0.2deg)',
-          background: 'repeating-linear-gradient(45deg, #f0f9ff, #f0f9ff 2px, #e0f2fe 2px, #e0f2fe 4px)'
-        }}>
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full" style={{ transform: 'rotate(15deg)' }}></div>
-            <h3 className="text-base font-bold text-blue-900" style={{ transform: 'rotate(-0.3deg)' }}>University Email Required</h3>
-          </div>
-          <p className="text-sm text-blue-800" style={{ transform: 'rotate(0.1deg)' }}>
-            Use your university email address. Currently supported: stanford.edu, berkeley.edu
-          </p>
-        </div>
+        
       </div>
     </div>
   );

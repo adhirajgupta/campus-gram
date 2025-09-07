@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Compose from "./pages/Compose";
 import Campus from "./pages/Campus";
 import StudyGroups from "./pages/StudyGroups";
+import StudyGroupDetail from "./pages/StudyGroupDetail";
 import Events from "./pages/Events";
 import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
@@ -31,8 +32,21 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+        <div className="text-center">
+          <div className="text-6xl font-bold text-gray-800 mb-4" style={{ 
+            transform: 'rotate(-2deg)',
+            textShadow: '3px 3px 0px rgba(0,0,0,0.1)'
+          }}>
+            Campus
+          </div>
+          <div className="text-4xl font-bold text-blue-600" style={{ 
+            transform: 'rotate(1deg)',
+            textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+          }}>
+            Gram
+          </div>
+        </div>
       </div>
     );
   }
@@ -49,8 +63,21 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+        <div className="text-center">
+          <div className="text-6xl font-bold text-gray-800 mb-4" style={{ 
+            transform: 'rotate(-2deg)',
+            textShadow: '3px 3px 0px rgba(0,0,0,0.1)'
+          }}>
+            Campus
+          </div>
+          <div className="text-4xl font-bold text-blue-600" style={{ 
+            transform: 'rotate(1deg)',
+            textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+          }}>
+            Gram
+          </div>
+        </div>
       </div>
     );
   }
@@ -81,6 +108,7 @@ function AppInner() {
         <Route path="/p/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
         <Route path="/campus" element={<ProtectedRoute><Campus /></ProtectedRoute>} />
         <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
+        <Route path="/study-group/:groupId" element={<ProtectedRoute><StudyGroupDetail /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
       </Routes>

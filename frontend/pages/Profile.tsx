@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Mail, GraduationCap, BookOpen, Home, Search, Plus, MessageCircle } from "lucide-react";
+import TopNavbar from "../components/TopNavbar";
+import { User, Mail, GraduationCap, BookOpen, Home, Search, Plus, MessageCircle, Settings, Shield, Bell } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Profile() {
@@ -23,7 +24,8 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
-      <div className="min-h-screen">
+      <TopNavbar />
+      <div className="min-h-screen pt-16">
         {/* Content */}
         <div className="px-6 py-8 pb-24">
           {/* Header */}
@@ -75,6 +77,37 @@ export default function Profile() {
             </div>
           </div>
 
+          {/* Action Buttons */}
+          {isOwnProfile && (
+            <div className="space-y-4 mt-6">
+              <button
+                onClick={() => navigate('/settings')}
+                className="w-full py-3 px-4 border-2 border-gray-400 rounded-lg font-bold text-gray-700 hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2"
+                style={{ 
+                  transform: 'rotate(-0.3deg)',
+                  background: 'repeating-linear-gradient(45deg, #f9f9f9, #f9f9f9 2px, #e5e5e5 2px, #e5e5e5 4px)'
+                }}
+              >
+                <Settings className="h-5 w-5" />
+                <span>Settings</span>
+              </button>
+              
+              {profileUser.isAdmin && (
+                <button
+                  onClick={() => navigate('/admin')}
+                  className="w-full py-3 px-4 border-2 border-blue-400 rounded-lg font-bold text-blue-700 hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
+                  style={{ 
+                    transform: 'rotate(0.2deg)',
+                    background: 'repeating-linear-gradient(45deg, #eff6ff, #eff6ff 2px, #dbeafe 2px, #dbeafe 4px)'
+                  }}
+                >
+                  <Shield className="h-5 w-5" />
+                  <span>Admin Panel</span>
+                </button>
+              )}
+            </div>
+          )}
+
           <div className="text-center py-8">
             <p className="text-gray-500" style={{ transform: 'rotate(0.3deg)' }}>posts and activity would be displayed here</p>
           </div>
@@ -89,8 +122,8 @@ export default function Profile() {
             <button onClick={() => navigate('/feed')} className="hover:opacity-70 transition-opacity">
               <Home className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(3deg)' }} />
             </button>
-            <button onClick={() => navigate('/search')} className="hover:opacity-70 transition-opacity">
-              <Search className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-2deg)' }} />
+            <button onClick={() => navigate('/study-groups')} className="hover:opacity-70 transition-opacity">
+              <MessageCircle className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-2deg)' }} />
             </button>
             <button onClick={() => navigate('/compose')} className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-400 absolute -top-4 left-1/2 hover:bg-gray-200 transition-colors" style={{ 
               transform: 'translateX(-50%) rotate(2deg)',
@@ -99,7 +132,7 @@ export default function Profile() {
               <Plus className="h-8 w-8 text-gray-500" style={{ transform: 'rotate(-1deg)' }} />
             </button>
             <button onClick={() => navigate('/events')} className="ml-20 hover:opacity-70 transition-opacity">
-              <MessageCircle className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-3deg)' }} />
+              <Bell className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-3deg)' }} />
             </button>
             <button onClick={() => navigate(`/u/${user?.username}`)} className="hover:opacity-70 transition-opacity">
               <User className="h-7 w-7 text-gray-600" style={{ transform: 'rotate(2deg)' }} />

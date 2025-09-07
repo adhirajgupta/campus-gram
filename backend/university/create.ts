@@ -1,6 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import { universityDB } from "./db";
 import bcrypt from "bcryptjs";
+import { seedUniversityData } from "./seed";
 
 export interface CreateUniversityRequest {
   name: string;
@@ -47,11 +48,19 @@ export const create = api<CreateUniversityRequest, University>(
     const passwordHash = await bcrypt.hash(req.adminPassword, 12);
     const username = req.adminEmail.split("@")[0];
 
+    let adminUserId: number;
     try {
-      await universityDB.exec`
+      const adminUser = await universityDB.queryRow<{ id: number }>`
         INSERT INTO users (university_id, email, username, full_name, password_hash, is_admin, email_verified_at)
         VALUES (${university.id}, ${req.adminEmail}, ${username}, ${req.adminFullName}, ${passwordHash}, true, NOW())
+        RETURNING id
       `;
+      
+      if (!adminUser) {
+        throw new Error("Failed to create admin user");
+      }
+      
+      adminUserId = adminUser.id;
     } catch (error: any) {
       // If user creation fails, clean up the university
       await universityDB.exec`DELETE FROM universities WHERE id = ${university.id}`;
@@ -61,6 +70,15 @@ export const create = api<CreateUniversityRequest, University>(
       }
       
       throw APIError.internal("Failed to create admin user");
+    }
+
+    // Seed the university with dummy data
+    try {
+      await seedUniversityData(university.id, adminUserId);
+    } catch (error) {
+      // Don't fail the university creation if seeding fails
+      // The university and admin user are still created successfully
+      // Logging will be handled by the seed function
     }
 
     return university;
