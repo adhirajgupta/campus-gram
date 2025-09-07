@@ -11,13 +11,15 @@ import type { CookieWithOptions } from "encore.dev/api";
  */
 export type BaseURL = string
 
-export const Local: BaseURL = "http://localhost:4000"
+// export const Local: BaseURL = "http://localhost:4000"
+export const Local: BaseURL = "https://staging-campus-gram-mvp-ei9i.encr.app"
+
 
 /**
  * Environment returns a BaseURL for calling the cloud environment with the given name.
  */
 export function Environment(name: string): BaseURL {
-    return `https://${name}-.encr.app`
+    return `https://staging-campus-gram-mvp-ei9i.encr.app`
 }
 
 /**
