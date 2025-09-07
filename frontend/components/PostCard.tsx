@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { Heart, MessageCircle, MapPin, User } from "lucide-react";

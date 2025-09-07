@@ -6,5 +6,8 @@
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "devDependencies": {
+    "workbox-build": "^7.3.0"
+  }
 }

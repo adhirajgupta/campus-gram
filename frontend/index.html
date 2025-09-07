@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CampusGram - Campus Social Network MVP</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/doodle.css@1.0.0/dist/doodle.css">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="manifest" href="/manifest.json" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('SW registered'));
+    }
+  </script>
+
+  <meta name="theme-color" content="#4a90e2" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusGram - Campus Social Network MVP</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/main.tsx"></script>
+</body>
+
 </html>
