@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import CreateUniversity from "./pages/CreateUniversity";
+import UniversityOnboarding from "./pages/UniversityOnboarding";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import Compose from "./pages/Compose";
@@ -70,21 +70,19 @@ function AppInner() {
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/feed" replace /> : <Login />} />
         <Route path="/register" element={user ? <Navigate to="/feed" replace /> : <Register />} />
-        <Route path="/create-university" element={user ? <Navigate to="/feed" replace /> : <CreateUniversity />} />
+        <Route path="/create-university" element={user ? <Navigate to="/feed" replace /> : <UniversityOnboarding />} />
         <Route path="/" element={<Navigate to="/feed" replace />} />
         
-        <Route element={<Layout />}>
-          <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-          <Route path="/u/:username" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/p/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
-          <Route path="/compose" element={<ProtectedRoute><Compose /></ProtectedRoute>} />
-          <Route path="/campus" element={<ProtectedRoute><Campus /></ProtectedRoute>} />
-          <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
-          <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
-          <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-        </Route>
+        <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+        <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+        <Route path="/compose" element={<ProtectedRoute><Compose /></ProtectedRoute>} />
+        <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+        <Route path="/u/:username" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/p/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
+        <Route path="/campus" element={<ProtectedRoute><Campus /></ProtectedRoute>} />
+        <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
       </Routes>
       <Toaster />
     </Router>

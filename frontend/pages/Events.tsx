@@ -7,12 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Calendar, Plus, MapPin, Clock } from "lucide-react";
+import { Calendar, Plus, MapPin, Clock, Home, Search, MessageCircle, User } from "lucide-react";
 import backend from "~backend/client";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Events() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -66,16 +68,28 @@ export default function Events() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-6 bg-gray-300 rounded w-1/2 mb-2"></div>
-              <div className="h-4 bg-gray-300 rounded w-1/3 mb-4"></div>
-              <div className="h-4 bg-gray-300 rounded w-full"></div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+        <div className="min-h-screen">
+          <div className="px-6 py-8 pb-24">
+            <div className="text-center mb-6">
+              <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
+                campus events
+              </h1>
+            </div>
+            <div className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="border-2 border-gray-400 rounded-lg p-4 animate-pulse" style={{ 
+                  transform: `rotate(${(i % 2 === 0 ? 1 : -1) * 0.3}deg)`,
+                  background: 'repeating-linear-gradient(45deg, #f9f9f9, #f9f9f9 2px, #e5e5e5 2px, #e5e5e5 4px)'
+                }}>
+                  <div className="h-6 bg-gray-300 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded w-1/3 mb-4"></div>
+                  <div className="h-4 bg-gray-300 rounded w-full"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -84,16 +98,29 @@ export default function Events() {
   const pastEvents = events?.events.filter(event => new Date(event.datetime) <= new Date()) || [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Campus Events</h1>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Event
-            </Button>
-          </DialogTrigger>
+    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+      <div className="min-h-screen">
+        {/* Content */}
+        <div className="px-6 py-8 pb-24">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
+              campus events
+            </h1>
+          </div>
+
+          {/* Create Event Button */}
+          <div className="text-center mb-6">
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <button className="px-6 py-3 border-2 border-gray-600 rounded-lg font-bold text-gray-700 hover:bg-gray-100 transition-colors" style={{ 
+                  transform: 'rotate(0.5deg)',
+                  background: 'repeating-linear-gradient(45deg, #e5e5e5, #e5e5e5 2px, #d1d5db 2px, #d1d5db 4px)'
+                }}>
+                  <Plus className="h-4 w-4 mr-2 inline" />
+                  create event
+                </button>
+              </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Event</DialogTitle>
@@ -202,7 +229,36 @@ export default function Events() {
             ))}
           </div>
         </div>
-      )}
+          )}
+        </div>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-100 border-t border-gray-300" style={{
+          background: 'repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 2px, #e5e7eb 2px, #e5e7eb 4px)',
+          transform: 'rotate(-0.5deg)'
+        }}>
+          <div className="flex justify-between items-center py-6 px-8 relative">
+            <button onClick={() => navigate('/feed')} className="hover:opacity-70 transition-opacity">
+              <Home className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(3deg)' }} />
+            </button>
+            <button onClick={() => navigate('/search')} className="hover:opacity-70 transition-opacity">
+              <Search className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(-2deg)' }} />
+            </button>
+            <button onClick={() => navigate('/compose')} className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-400 absolute -top-4 left-1/2 hover:bg-gray-200 transition-colors" style={{ 
+              transform: 'translateX(-50%) rotate(2deg)',
+              background: 'repeating-linear-gradient(45deg, #f9fafb, #f9fafb 2px, #f3f4f6 2px, #f3f4f6 4px)'
+            }}>
+              <Plus className="h-8 w-8 text-gray-500" style={{ transform: 'rotate(-1deg)' }} />
+            </button>
+            <button onClick={() => navigate('/events')} className="ml-20 hover:opacity-70 transition-opacity">
+              <MessageCircle className="h-7 w-7 text-gray-600" style={{ transform: 'rotate(-3deg)' }} />
+            </button>
+            <button onClick={() => navigate(`/u/${user?.username}`)} className="hover:opacity-70 transition-opacity">
+              <User className="h-7 w-7 text-gray-500" style={{ transform: 'rotate(2deg)' }} />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
