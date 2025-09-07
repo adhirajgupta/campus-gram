@@ -1,4 +1,4 @@
-# Open Source Project Documentation
+# CampusGram User Documentation
 
 ## Introduction
 
