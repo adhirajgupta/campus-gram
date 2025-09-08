@@ -35,7 +35,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-gray-50 font-primary">
       <div className="max-w-sm mx-auto min-h-screen p-6">
         {/* Header */}
         <div className="text-left mb-6">

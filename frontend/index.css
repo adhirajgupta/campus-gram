@@ -11,6 +11,32 @@
   font-display: swap;
 }
 
+/* Font utility classes */
+.font-patrick-hand {
+  font-family: 'Patrick Hand', cursive;
+}
+
+.font-gloria {
+  font-family: 'Gloria Hallelujah', cursive;
+}
+
+.font-mtf-jude {
+  font-family: 'MTF Jude', cursive;
+}
+
+/* Font combinations for common use cases */
+.font-primary {
+  font-family: 'Patrick Hand', cursive;
+}
+
+.font-secondary {
+  font-family: 'Gloria Hallelujah', cursive;
+}
+
+.font-legacy {
+  font-family: 'MTF Jude', cursive;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @utility container {

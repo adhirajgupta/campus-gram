@@ -540,7 +540,7 @@ export default function UniversityOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-gray-50 font-primary">
       {/* Header */}
       <div className="bg-white border-b-2 border-gray-300 sticky top-0 z-10">
         <div className="px-6 py-4">

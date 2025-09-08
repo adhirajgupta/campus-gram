@@ -171,7 +171,9 @@ export namespace comments {
  * Import the endpoint handlers to derive the types for the client.
  */
 import { create as api_events_create_create } from "~backend/events/create";
+import { get as api_events_get_get } from "~backend/events/get";
 import { list as api_events_list_list } from "~backend/events/list";
+import { rsvp as api_events_rsvp_rsvp } from "~backend/events/rsvp";
 
 export namespace events {
 
@@ -181,7 +183,9 @@ export namespace events {
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
             this.create = this.create.bind(this)
+            this.get = this.get.bind(this)
             this.list = this.list.bind(this)
+            this.rsvp = this.rsvp.bind(this)
         }
 
         /**
@@ -191,6 +195,20 @@ export namespace events {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/events`, {method: "POST", body: JSON.stringify(params)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_events_create_create>
+        }
+
+        /**
+         * Gets a single event by ID
+         */
+        public async get(params: RequestType<typeof api_events_get_get>): Promise<ResponseType<typeof api_events_get_get>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                userId: params.userId === undefined ? undefined : String(params.userId),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/events/${encodeURIComponent(params.eventId)}`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_events_get_get>
         }
 
         /**
@@ -205,6 +223,21 @@ export namespace events {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/events`, {query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_events_list_list>
+        }
+
+        /**
+         * RSVP to an event
+         */
+        public async rsvp(params: RequestType<typeof api_events_rsvp_rsvp>): Promise<ResponseType<typeof api_events_rsvp_rsvp>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                userId: params.userId,
+                status: params.status,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/events/${encodeURIComponent(params.eventId)}/rsvp`, {method: "POST", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_events_rsvp_rsvp>
         }
     }
 }

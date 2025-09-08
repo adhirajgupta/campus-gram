@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import TopNavbar from "../components/TopNavbar";
+import { Font, Header, Body, Accent, Small } from "../components/Font";
+import { useFonts } from "../hooks/useFonts";
 import { User, Mail, GraduationCap, BookOpen, Home, Search, Plus, MessageCircle, Bell } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +14,7 @@ export default function Settings() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fonts = useFonts();
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
     year: user?.year?.toString() || "",
@@ -52,7 +55,7 @@ export default function Settings() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-white" style={fonts.primary}>
       <TopNavbar />
       <div className="min-h-screen pt-16">
         {/* Content */}

@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { Font, Header, Small } from "./Font";
+import { useFonts } from "../hooks/useFonts";
 
 export default function TopNavbar() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const fonts = useFonts();
 
   if (!user) return null;
 
@@ -35,13 +38,12 @@ export default function TopNavbar() {
             </div>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-800" style={{ 
+            <Header className="text-lg font-bold text-gray-800" style={{ 
               transform: 'rotate(-1deg)',
-              fontFamily: 'MTF Jude, cursive',
               textShadow: '1px 1px 0px rgba(0,0,0,0.1)'
             }}>
               Campus Gram
-            </h1>
+            </Header>
           </div>
         </div>
 
@@ -55,7 +57,7 @@ export default function TopNavbar() {
               className="w-full h-8 pl-9 pr-3 text-sm border border-gray-400 rounded-lg bg-white focus:outline-none focus:border-gray-600"
               style={{
                 transform: 'rotate(0.3deg)',
-                fontFamily: 'MTF Jude, cursive',
+                ...fonts.primary,
                 background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 2px, #f9f9f9 2px, #f9f9f9 4px)'
               }}
               onClick={() => navigate('/search')}
@@ -65,12 +67,11 @@ export default function TopNavbar() {
 
         {/* University Name (if available) */}
         <div className="text-right">
-          <p className="text-xs text-gray-600" style={{ 
-            transform: 'rotate(0.5deg)',
-            fontFamily: 'MTF Jude, cursive'
+          <Small className="text-xs text-gray-600" style={{ 
+            transform: 'rotate(0.5deg)'
           }}>
             {user.university?.name || 'University'}
-          </p>
+          </Small>
         </div>
       </div>
     </div>

@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import PostCard from "../components/PostCard";
 import TopNavbar from "../components/TopNavbar";
+import { Font, Header, Body, Accent, Small } from "../components/Font";
+import { useFonts } from "../hooks/useFonts";
 import backend from "~backend/client";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +26,7 @@ export default function Feed() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const fonts = useFonts();
   const [cursor, setCursor] = useState<string | undefined>();
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [selectedPost, setSelectedPost] = useState<any | null>(null);
@@ -153,7 +156,7 @@ export default function Feed() {
             className="mt-4 px-6 py-3 border-2 border-gray-600 rounded-lg font-bold text-lg"
             style={{ 
               transform: 'rotate(-0.5deg)',
-              background: 'repeating-linear-gradient(45deg, #e5e5e5, #e5e5e5 2px, #d1d5db 2px, #d1d5db 4px)'
+              background: 'repeating-linear-gradient(45deg, #e5e5e5, #e5e5e5 8px, #e0e0e0 8px, #e0e0e0 16px)'
             }}
           >
             Try Again
@@ -164,23 +167,23 @@ export default function Feed() {
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-white" style={fonts.primary}>
       <TopNavbar />
       <div className="min-h-screen pt-16">
         {/* Content */}
         <div className="px-6 py-8 pb-24">
           {/* Welcome Message */}
           <div className="text-center mb-6">
-            <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
+            <Header className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
               welcome, what's happening on campus?
-            </h1>
-            <button 
+            </Header>
+            <button
               onClick={() => refetch()}
               disabled={isLoading}
               className="mt-2 text-sm text-gray-600 underline decoration-1 underline-offset-2 hover:text-gray-800"
               style={{ transform: 'rotate(0.3deg)' }}
             >
-              {isLoading ? 'refreshing...' : 'refresh'}
+              <Small>{isLoading ? 'refreshing...' : 'refresh'}</Small>
             </button>
           </div>
 
@@ -193,23 +196,23 @@ export default function Feed() {
                 className="flex-shrink-0 px-4 py-2 border-2 border-gray-600 rounded-lg text-sm font-bold whitespace-nowrap"
                 style={{ 
                   transform: `rotate(${(index % 2 === 0 ? 1 : -1) * 0.5}deg)`,
-                  background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 2px, #f9f9f9 2px, #f9f9f9 4px)'
+                  background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 8px, #fafafa 8px, #fafafa 16px)'
                 }}
               >
                 <div className="w-4 h-4 border border-gray-400 rounded mr-2 inline-block" style={{ transform: 'rotate(45deg)' }}>
                   <div className="w-full h-0.5 bg-gray-400 transform rotate-45 absolute top-1/2 left-0"></div>
                   <div className="w-full h-0.5 bg-gray-400 transform -rotate-45 absolute top-1/2 left-0"></div>
                 </div>
-                {category}
+                <Small>{category}</Small>
               </button>
             ))}
           </div>
 
           {/* Stats */}
           <div className="flex justify-between mb-6 text-sm text-gray-600">
-            <span style={{ transform: 'rotate(-0.3deg)' }}>150k Posts</span>
-            <span style={{ transform: 'rotate(0.2deg)' }}>30 Videos</span>
-            <span style={{ transform: 'rotate(-0.1deg)' }}>15 Users</span>
+            <Accent style={{ transform: 'rotate(-0.3deg)' }}>150k Posts</Accent>
+            <Accent style={{ transform: 'rotate(0.2deg)' }}>30 Videos</Accent>
+            <Accent style={{ transform: 'rotate(-0.1deg)' }}>15 Users</Accent>
           </div>
 
           {/* Divider */}
@@ -225,7 +228,7 @@ export default function Feed() {
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="border-2 border-gray-400 rounded-lg p-4" style={{ 
                     transform: `rotate(${(i % 2 === 0 ? 1 : -1) * 0.3}deg)`,
-                    background: 'repeating-linear-gradient(45deg, #f9f9f9, #f9f9f9 2px, #e5e5e5 2px, #e5e5e5 4px)'
+                    background: 'repeating-linear-gradient(45deg, #f9f9f9, #f9f9f9 8px, #f5f5f5 8px, #f5f5f5 16px)'
                   }}>
                     <div className="w-full h-32 bg-gray-300 rounded mb-2 relative">
                       <div className="absolute top-2 right-2 w-6 h-6 border border-gray-400 rounded-full flex items-center justify-center">
@@ -251,7 +254,7 @@ export default function Feed() {
                       }`}
                       style={{ 
                         transform: `rotate(${(index % 2 === 0 ? 1 : -1) * 0.3}deg)`,
-                        background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 2px, #f9f9f9 2px, #f9f9f9 4px)'
+                        background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 8px, #fafafa 8px, #fafafa 16px)'
                       }}
                       onClick={() => setSelectedPost(post)}
                     >
@@ -355,7 +358,7 @@ export default function Feed() {
 
         {/* Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 bg-gray-100 border-t border-gray-300" style={{
-          background: 'repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 2px, #e5e7eb 2px, #e5e7eb 4px)',
+          background: 'repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 8px, #f0f1f3 8px, #f0f1f3 16px)',
           transform: 'rotate(-0.5deg)'
         }}>
           <div className="flex justify-between items-center py-6 px-8 relative">
@@ -367,7 +370,7 @@ export default function Feed() {
             </button>
             <button onClick={() => navigate('/compose')} className="w-24 h-16 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-400 absolute -top-4 left-1/2 hover:bg-gray-200 transition-colors" style={{ 
               transform: 'translateX(-50%) rotate(2deg)',
-              background: 'repeating-linear-gradient(45deg, #f9fafb, #f9fafb 2px, #f3f4f6 2px, #f3f4f6 4px)'
+              background: 'repeating-linear-gradient(45deg, #f9fafb, #f9fafb 8px, #f7f8fa 8px, #f7f8fa 16px)'
             }}>
               <Plus className="h-8 w-8 text-gray-500" style={{ transform: 'rotate(-1deg)' }} />
             </button>
@@ -385,7 +388,7 @@ export default function Feed() {
           <div className="fixed inset-0 bg-white flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto border-2 border-gray-300 relative" style={{ 
               transform: 'rotate(-0.5deg)',
-              background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 2px, #f9fafb 2px, #f9fafb 4px)'
+              background: 'repeating-linear-gradient(45deg, #ffffff, #ffffff 8px, #fafafa 8px, #fafafa 16px)'
             }}>
               {/* Close Button */}
               <button 
@@ -453,17 +456,15 @@ export default function Feed() {
                   })()}
 
                   {/* Post Content */}
-                  <div className="text-gray-800" style={{ fontFamily: 'MTF Jude, cursive' }}>
+                  <Body className="text-gray-800">
                     {selectedPost.content}
-                  </div>
+                  </Body>
 
                   {/* Location */}
                   {selectedPost.location && (
                     <div className="flex items-center space-x-1 text-gray-500">
                       <MapPin className="h-4 w-4" />
-                      <span className="text-sm" style={{ fontFamily: 'MTF Jude, cursive' }}>
-                        {selectedPost.location}
-                      </span>
+                      <Small>{selectedPost.location}</Small>
                     </div>
                   )}
 
@@ -471,13 +472,12 @@ export default function Feed() {
                   {selectedPost.hashtags && Array.isArray(selectedPost.hashtags) && selectedPost.hashtags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {selectedPost.hashtags.map((hashtag: string, index: number) => (
-                        <span 
+                        <Accent 
                           key={index}
-                          className="text-blue-600 text-sm" 
-                          style={{ fontFamily: 'MTF Jude, cursive' }}
+                          className="text-blue-600 text-sm"
                         >
                           #{hashtag}
-                        </span>
+                        </Accent>
                       ))}
                     </div>
                   )}

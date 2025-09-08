@@ -1,13 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import TopNavbar from "../components/TopNavbar";
-import { User, Mail, GraduationCap, BookOpen, Home, Search, Plus, MessageCircle, Settings, Shield, Bell } from "lucide-react";
+import { Font, Header, Body, Accent, Small } from "../components/Font";
+import { useFonts } from "../hooks/useFonts";
+import { User, Mail, GraduationCap, BookOpen, Home, Search, Plus, MessageCircle, Settings, Shield, Bell, LogOut } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Profile() {
   const { username } = useParams<{ username: string }>();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const fonts = useFonts();
 
   // In a real app, you'd fetch the profile based on username
   // For now, showing current user's profile
@@ -16,14 +19,14 @@ export default function Profile() {
 
   if (!profileUser) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center" style={{ fontFamily: 'MTF Jude, cursive' }}>
-        <p className="text-gray-500" style={{ transform: 'rotate(-0.5deg)' }}>user not found</p>
+      <div className="min-h-screen bg-white flex items-center justify-center" style={fonts.primary}>
+        <Small className="text-gray-500" style={{ transform: 'rotate(-0.5deg)' }}>user not found</Small>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-white" style={fonts.primary}>
       <TopNavbar />
       <div className="min-h-screen pt-16">
         {/* Content */}
@@ -105,6 +108,21 @@ export default function Profile() {
                   <span>Admin Panel</span>
                 </button>
               )}
+
+              <button
+                onClick={() => {
+                  logout();
+                  navigate('/login');
+                }}
+                className="w-full py-3 px-4 border-2 border-red-400 rounded-lg font-bold text-red-700 hover:bg-red-50 transition-colors flex items-center justify-center space-x-2"
+                style={{ 
+                  transform: 'rotate(-0.1deg)',
+                  background: 'repeating-linear-gradient(45deg, #fef2f2, #fef2f2 2px, #fee2e2 2px, #fee2e2 4px)'
+                }}
+              >
+                <LogOut className="h-5 w-5" />
+                <span>Sign Out</span>
+              </button>
             </div>
           )}
 

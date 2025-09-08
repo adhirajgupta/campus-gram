@@ -6,12 +6,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search as SearchIcon, User, FileText, MapPin, Home, Plus, MessageCircle } from "lucide-react";
 import { useDebounce } from "../hooks/useDebounce";
+import { Font, Header, Body, Accent, Small } from "../components/Font";
+import { useFonts } from "../hooks/useFonts";
 import backend from "~backend/client";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Search() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const fonts = useFonts();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [activeTab, setActiveTab] = useState("all");
@@ -36,15 +39,15 @@ export default function Search() {
   }, [debouncedQuery, setSearchParams]);
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-white" style={fonts.primary}>
       <div className="min-h-screen">
         {/* Content */}
         <div className="px-6 py-8 pb-24">
           {/* Header */}
           <div className="text-center mb-6">
-            <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
+            <Header className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
               search campus
-            </h1>
+            </Header>
           </div>
 
           {/* Search Bar */}
@@ -65,7 +68,7 @@ export default function Search() {
           {query.trim().length === 0 ? (
             <div className="text-center py-12">
               <SearchIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" style={{ transform: 'rotate(2deg)' }} />
-              <p className="text-gray-500" style={{ transform: 'rotate(-0.5deg)' }}>enter a search term to find users, posts, and locations</p>
+              <Small className="text-gray-500" style={{ transform: 'rotate(-0.5deg)' }}>enter a search term to find users, posts, and locations</Small>
             </div>
           ) : (
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -92,10 +95,10 @@ export default function Search() {
               <div className="space-y-6">
                 {searchResults?.users && searchResults.users.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-3 flex items-center">
+                    <Header className="text-lg font-semibold mb-3 flex items-center">
                       <User className="h-5 w-5 mr-2" />
                       Users
-                    </h3>
+                    </Header>
                     <div className="space-y-2">
                       {searchResults.users.map((user) => (
                         <Card key={user.id}>
@@ -131,10 +134,10 @@ export default function Search() {
 
                 {searchResults?.posts && searchResults.posts.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-3 flex items-center">
+                    <Header className="text-lg font-semibold mb-3 flex items-center">
                       <FileText className="h-5 w-5 mr-2" />
                       Posts
-                    </h3>
+                    </Header>
                     <div className="space-y-2">
                       {searchResults.posts.map((post) => (
                         <Card key={post.id}>
@@ -152,10 +155,10 @@ export default function Search() {
 
                 {searchResults?.locations && searchResults.locations.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-3 flex items-center">
+                    <Header className="text-lg font-semibold mb-3 flex items-center">
                       <MapPin className="h-5 w-5 mr-2" />
                       Locations
-                    </h3>
+                    </Header>
                     <div className="space-y-2">
                       {searchResults.locations.map((location) => (
                         <Card key={location.id}>
@@ -176,7 +179,7 @@ export default function Search() {
                  searchResults.posts.length === 0 && 
                  searchResults.locations.length === 0 && (
                   <div className="text-center py-8">
-                    <p className="text-gray-500">No results found for "{query}"</p>
+                    <Small className="text-gray-500">No results found for "{query}"</Small>
                   </div>
                 )}
               </div>

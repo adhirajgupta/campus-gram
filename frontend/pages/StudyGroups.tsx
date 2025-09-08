@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import TopNavbar from "../components/TopNavbar";
+import { Font, Header, Body, Accent, Small } from "../components/Font";
+import { useFonts } from "../hooks/useFonts";
 import { 
   Users, Plus, UserPlus, Home, MessageCircle, Bell, User,
   BookOpen, GraduationCap, Calendar, MapPin
@@ -15,6 +17,7 @@ export default function StudyGroups() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const fonts = useFonts();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -120,16 +123,16 @@ export default function StudyGroups() {
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-white" style={fonts.primary}>
       <TopNavbar />
       <div className="min-h-screen pt-16">
         {/* Content */}
         <div className="px-6 py-8 pb-24">
           {/* Header */}
           <div className="text-center mb-6">
-            <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
+            <Header className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
               study groups
-            </h1>
+            </Header>
           </div>
 
           {/* Create Group Button */}

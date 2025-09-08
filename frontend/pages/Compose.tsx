@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import TopNavbar from "../components/TopNavbar";
+import { Font, Header, Body, Accent, Small } from "../components/Font";
+import { useFonts } from "../hooks/useFonts";
 import { 
   MapPin, Home, Search, Plus, MessageCircle, User, Bell,
   Image, Smile, Hash, Eye, X, Upload, Camera,
@@ -32,6 +34,7 @@ export default function Compose() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const fonts = useFonts();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -163,16 +166,16 @@ export default function Compose() {
   };
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: 'MTF Jude, cursive' }}>
+    <div className="min-h-screen bg-white" style={fonts.primary}>
       <TopNavbar />
       <div className="min-h-screen pt-16">
         {/* Content */}
         <div className="px-6 py-8 pb-24">
           {/* Header */}
           <div className="text-center mb-6">
-            <h1 className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
+            <Header className="text-lg text-gray-800" style={{ transform: 'rotate(-0.5deg)' }}>
               create a post
-            </h1>
+            </Header>
           </div>
 
           {/* Post Form */}
