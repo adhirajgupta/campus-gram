@@ -83,8 +83,6 @@ export default defineConfig({
     "all"
   ],
   cors:true,
-    origin: "https://9f9dbfd7f9c9.ngrok-free.app" // to be changed once the final domain comes through
-
-}
-
+    origin: "https://staging-campus-gram-mvp-ei9i.frontend.encr.app" // to be changed once the final domain comes through
+ }
 })
