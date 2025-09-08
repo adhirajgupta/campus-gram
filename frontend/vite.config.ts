@@ -72,7 +72,7 @@ export default defineConfig({
 // })
 
   ],
-  mode: "development",
+  mode: "production",
   build: {
     minify: false,
   },
